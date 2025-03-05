@@ -276,9 +276,6 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
                 <ArrowRight className="h-5 w-5" />
               </button>
             </div>
-            <div
-              className={`absolute bottom-0 left-0 h-0.5 bg-green-500 transition-all duration-300 ${password ? "w-full" : "w-0"}`}
-            ></div>
             {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
             {isLoading && (
               <div className="absolute right-12 top-1/2 -translate-y-1/2">
