@@ -45,9 +45,12 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
       const success = await login(password)
 
       if (!success) {
-        toast.error("Incorrect password");
         setShake(true);
-        setTimeout(() => setShake(false), 500);
+        setError("Access Denied: Biometric Mismatch");
+        setTimeout(() => {
+          setShake(false);
+          setError("");
+        }, 2000);
       }
     } catch (err) {
       setError("An error occurred. Please try again.")
@@ -211,9 +214,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
               {patternPoints.length > 0 ? `${patternPoints.length}/4 points selected` : ""}
             </div>
 
-            {error && (
-              <div className="absolute -bottom-14 left-0 right-0 text-center text-xs text-red-500">{error}</div>
-            )}
+            
 
             {debug && (
               <div className="absolute -bottom-20 left-0 right-0 text-center text-xs text-blue-500">{debug}</div>
