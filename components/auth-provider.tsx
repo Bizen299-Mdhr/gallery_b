@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const CORRECT_PASSWORD = "cyber2077"
 
 // The L shape pattern: Top-left → Middle-left → Bottom-left → Bottom-middle
-const L_PATTERN = [0, 3, 6, 7]
+const L_PATTERN = [0, 3, 6, 7, 4]
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -49,11 +49,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check if the pattern matches the L shape (0,3,6,7)
     // We'll be lenient and just check if these 4 points are included, regardless of order
     if (
-      pattern.length === 4 &&
+      pattern.length === 5 &&
       pattern.includes(0) &&
       pattern.includes(3) &&
       pattern.includes(6) &&
-      pattern.includes(7)
+      pattern.includes(7) &&
+      pattern.includes(4)
     ) {
       console.log("Pattern matched! Logging in...")
       setIsAuthenticated(true)

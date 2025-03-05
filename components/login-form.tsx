@@ -56,13 +56,6 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
   }, [password, login])
 
   const handlePatternSubmit = async () => {
-    if (patternPoints.length < 4) {
-      setError(`Need 4 points (you have ${patternPoints.length})`)
-      setShake(true)
-      setTimeout(() => setShake(false), 500)
-      return
-    }
-
     setIsLoading(true)
     setError("")
     setDebug(`Submitting pattern: ${patternPoints.map((p) => p.index).join(", ")}`)
@@ -75,9 +68,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
       const success = await loginWithPattern(patternIndices)
 
       if (!success) {
-        setError("Incorrect pattern - try the L shape: top-left → middle-left → bottom-left → bottom-middle")
         setShake(true)
-        setTimeout(() => setShake(false), 500)
       }
     } catch (err) {
       setError("An error occurred. Please try again.")
@@ -103,10 +94,11 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
       const newPoints = [...prev, { index, x: col, y: row }]
 
       // If we have 4 points, submit the pattern after a short delay
-      if (newPoints.length === 4) {
+      if (newPoints.length === 5) {
+        // Move the setTimeout outside the state update
         setTimeout(() => {
           handlePatternSubmit()
-        }, 300)
+        }, 100)
       }
 
       return newPoints
@@ -130,6 +122,14 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
       return () => clearTimeout(timer)
     }
   }, [password, handlePasswordSubmit])
+
+  useEffect(() => {
+    if (patternPoints.length === 5) {
+      setTimeout(() => {
+        handlePatternSubmit()
+      }, 100)
+    }
+  }, [patternPoints])
 
   return (
     <div
@@ -172,11 +172,6 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
         {usePattern ? (
           // Pattern lock screen - simplified to just click on points
           <div ref={patternRef} className="w-full aspect-square max-w-[200px] mx-auto relative mt-4">
-            {/* Pattern hint - positioned below the toggle */}
-            <div className="absolute -top-6 left-0 right-0 text-center text-xs text-gray-400">
-              Draw an "L" shape: top-left → middle-left → bottom-left → bottom-middle
-            </div>
-
             {/* Pattern grid with labels */}
             <div className="grid grid-cols-3 gap-4 h-full w-full">
               {patternGrid.map((point) => (
