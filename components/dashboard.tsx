@@ -4,7 +4,7 @@ import { useAuth } from "./auth-provider"
 import { LogOut, Grid, List, Sun, Moon } from "lucide-react"
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City"]
-const imageUrls = Array.from({ length: 50 }, (_, i) => ({
+const imageUrls = Array.from({ length: 90 }, (_, i) => ({
   url: `https://picsum.photos/800/600?random=${i}`,
   category: categories[Math.floor(Math.random() * (categories.length - 1)) + 1] // Assign random category
 }))
@@ -59,6 +59,9 @@ export default function Dashboard() {
     }, 300)
     return () => clearTimeout(timer)
   }, [activeCategory])
+
+  // Calculate container height based on number of images
+  const containerHeight = Math.ceil(filteredImages.length / 5) * 600 + window.innerHeight
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden">
@@ -136,10 +139,13 @@ export default function Dashboard() {
       <div className="pt-32 pb-8">
         {viewMode === "float" ? (
           // Floating Images Layout
-          <div className="relative" style={{ 
-            height: `${Math.ceil(filteredImages.length / 5) * 500}px`,
-            paddingBottom: '100vh'
-          }}>
+          <div 
+            className="relative"
+            style={{ 
+              height: `${containerHeight}px`,
+              paddingBottom: '100vh' // Extra space for scrolling
+            }}
+          >
             {filteredImages.map(({url}, index) => (
               <div
                 key={index}
