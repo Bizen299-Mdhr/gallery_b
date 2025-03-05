@@ -35,7 +35,7 @@ export default function RootLayout({
                 color: '#fff',
                 borderRadius: '12px',
                 padding: '16px 24px',
-                border: '1px solid rgba(34, 197, 94, 0.3)',
+                border: '1px solid rgba(21, 215, 92, 0.3)',
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 4px 30px rgba(34, 197, 94, 0.1)',
                 letterSpacing: '0.5px',
@@ -52,8 +52,8 @@ export default function RootLayout({
               },
               error: {
                 style: {
-                  borderColor: 'rgba(239, 68, 68, 0.5)',
-                  boxShadow: '0 4px 30px rgba(239, 68, 68, 0.2)',
+                  borderColor: 'rgba(42, 204, 50, 0.5)',
+                  boxShadow: '0 4px 30px rgba(19, 205, 28, 0.2)',
                 },
                 iconTheme: {
                   primary: '#ef4444',

@@ -1,7 +1,8 @@
 "use client"
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Lock, Check } from "lucide-react"
+import { Lock, Check, ArrowRight } from "lucide-react"
 import { useAuth } from "./auth-provider"
+import toast from "react-hot-toast"
 
 interface LoginFormProps {
   setIsHovering: (value: boolean) => void
@@ -44,9 +45,9 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
       const success = await login(password)
 
       if (!success) {
-        setError("Incorrect password")
-        setShake(true)
-        setTimeout(() => setShake(false), 500)
+        toast.error("Incorrect password");
+        setShake(true);
+        setTimeout(() => setShake(false), 500);
       }
     } catch (err) {
       setError("An error occurred. Please try again.")
@@ -111,17 +112,6 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
     setError("")
     setDebug("")
   }, [usePattern])
-
-  // Auto-submit password when typing stops
-  useEffect(() => {
-    if (password.length > 0) {
-      const timer = setTimeout(() => {
-        handlePasswordSubmit()
-      }, 1000)
-
-      return () => clearTimeout(timer)
-    }
-  }, [password, handlePasswordSubmit])
 
   useEffect(() => {
     if (patternPoints.length === 5) {
@@ -268,18 +258,30 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full rounded-full border bg-black/30 p-3 pl-10 pr-4 transition-all duration-300 focus:outline-none ${
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePasswordSubmit();
+                  }
+                }}
+                className={`w-full rounded-full border bg-black/30 p-3 pl-10 pr-12 transition-all duration-300 focus:outline-none ${
                   error ? "border-red-500 text-red-300" : "border-gray-700 text-white"
                 } focus:border-green-500 focus:ring-1 focus:ring-green-500`}
                 placeholder="Enter password"
               />
+              <button
+                onClick={handlePasswordSubmit}
+                className="absolute right-3 p-1 text-gray-400 hover:text-green-500 transition-colors"
+                disabled={isLoading}
+              >
+                <ArrowRight className="h-5 w-5" />
+              </button>
             </div>
             <div
               className={`absolute bottom-0 left-0 h-0.5 bg-green-500 transition-all duration-300 ${password ? "w-full" : "w-0"}`}
             ></div>
             {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
             {isLoading && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <div className="absolute right-12 top-1/2 -translate-y-1/2">
                 <svg
                   className="h-4 w-4 animate-spin text-green-500"
                   xmlns="http://www.w3.org/2000/svg"
