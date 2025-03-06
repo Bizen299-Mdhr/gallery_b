@@ -40,7 +40,7 @@ export default function CustomCursor({ position, isHovering }: CustomCursorProps
           transformOrigin: "center center",
         }}
       >
-        <div className="w-8 h-8 rounded-full border border-green-500 -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="w-8 h-8 rounded-full border border-blue-500 -translate-x-1/2 -translate-y-1/2"></div>
       </div>
 
       {/* Dot cursor - actual click point */}
