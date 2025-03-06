@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "./auth-provider"
 import { LogOut, Grid, List, Sun, Moon, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { Header } from "./header"
+import { CategoryNav } from "./category-nav"
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City"]
 const imageUrls = Array.from({ length: 50 }, (_, i) => ({
@@ -113,85 +115,21 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
       className="min-h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden"
       onMouseEnter={() => setIsHovering(false)}
     >
-      {/* Header */}
-      <div
-        className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800"
-        onMouseEnter={() => setIsHovering(true)}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Gallery</h1>
-          <div className="flex items-center gap-4">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setViewMode("float")}
-                className={`p-2 rounded-lg ${
-                  viewMode === "float" ? "bg-gray-200 dark:bg-gray-800" : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                } transition-colors`}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <Grid className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              </button>
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg ${
-                  viewMode === "grid" ? "bg-gray-200 dark:bg-gray-800" : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                } transition-colors`}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <List className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              </button>
-            </div>
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              aria-label="Toggle dark mode"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              {isDarkMode ? (
-                <Sun className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-              )}
-            </button>
-            <button
-              onClick={logout}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              aria-label="Log out"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              <LogOut className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <Header
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        isDarkMode={isDarkMode}
+        toggleDarkMode={toggleDarkMode}
+        logout={logout}
+        setIsHovering={setIsHovering}
+      />
 
-      {/* Category Navigation */}
-      <div
-        className="fixed top-16 left-0 right-0 z-40 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md"
-        onMouseEnter={() => setIsHovering(true)}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-2 flex gap-3 overflow-auto hide-scrollbar">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
-                activeCategory === category
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700"
-              } transition-colors`}
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
+      <CategoryNav
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+        categories={categories}
+        setIsHovering={setIsHovering}
+      />
 
       {/* Content Area */}
       <div className="pt-32 pb-8">
