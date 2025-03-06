@@ -192,11 +192,11 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
           </div>
         ) : (
           // Grid Layout
-          <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="max-w-7xl mx-auto px-1 sm:px-2 md:px-4 grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-2 md:gap-3 lg:gap-4">
             {filteredImages.map(({ url }, index) => (
               <div
                 key={index}
-                className="relative aspect-square rounded-2xl overflow-hidden group shadow-lg dark:shadow-gray-800/50 transition-all duration-500 cursor-pointer"
+                className="relative aspect-square rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden group shadow-sm md:shadow-md lg:shadow-lg dark:shadow-gray-800/50 transition-all duration-500 cursor-pointer"
                 style={{
                   transitionDelay: `${(index % 6) * 50}ms`,
                 }}
@@ -209,7 +209,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                   alt={`Gallery Image ${index}`}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-2 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-1 md:p-2 text-xs sm:text-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {filteredImages[index].category}
                 </div>
               </div>
