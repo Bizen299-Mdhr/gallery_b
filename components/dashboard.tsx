@@ -27,6 +27,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
   const [filteredImages, setFilteredImages] = useState(imageUrls)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<number | null>(null)
 
   // Toggle dark mode and save to localStorage
   const toggleDarkMode = () => {
@@ -71,6 +72,10 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
 
   // Calculate container height based on number of images
   const containerHeight = Math.ceil(filteredImages.length / 5) * 600 + window.innerHeight
+
+  const handleImageClick = (index: number) => {
+    setSelectedImage(index)
+  }
 
   return (
     <main
@@ -174,13 +179,14 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 ref={(el) => {
                   if (el) imageRefs.current[index] = el
                 }}
-                className="absolute w-[300px] h-[400px] rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden group transition-all duration-500"
+                className="absolute w-[300px] h-[400px] rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden group transition-all duration-500 cursor-pointer"
                 style={{
                   left: `${10 + (index % 5) * 18}%`,
                   top: `${Math.floor(index / 5) * 500}px`,
                   zIndex: index % 2 === 0 ? 1 : 2,
                   transform: `rotate(${index % 2 === 0 ? -3 : 3}deg)`,
                 }}
+                onClick={() => handleImageClick(index)}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >
@@ -198,10 +204,11 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
             {filteredImages.map(({ url }, index) => (
               <div
                 key={index}
-                className="relative aspect-square rounded-2xl overflow-hidden group shadow-lg dark:shadow-gray-800/50 transition-all duration-500"
+                className="relative aspect-square rounded-2xl overflow-hidden group shadow-lg dark:shadow-gray-800/50 transition-all duration-500 cursor-pointer"
                 style={{
                   transitionDelay: `${(index % 6) * 50}ms`,
                 }}
+                onClick={() => handleImageClick(index)}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >
@@ -225,6 +232,31 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
             onMouseEnter={() => setIsHovering(true)}
           >
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+          </div>
+        )}
+
+        {selectedImage !== null && (
+          <div 
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
+            onMouseEnter={() => setIsHovering(true)}
+          >
+            <div className="relative max-w-4xl w-full max-h-[90vh]">
+              <button
+                className="absolute -top-8 right-0 text-white hover:text-gray-200 transition-colors"
+                onClick={() => setSelectedImage(null)}
+              >
+                Close
+              </button>
+              <img
+                src={filteredImages[selectedImage].url}
+                alt={`Enlarged view - ${filteredImages[selectedImage].category}`}
+                className="w-full h-full object-contain rounded-lg"
+              />
+              <div className="absolute bottom-4 left-4 text-white text-sm bg-black/50 px-3 py-1 rounded-full">
+                {filteredImages[selectedImage].category}
+              </div>
+            </div>
           </div>
         )}
       </div>
