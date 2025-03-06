@@ -1,7 +1,7 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "./auth-provider"
-import { LogOut, Grid, List, Sun, Moon } from "lucide-react"
+import { LogOut, Grid, List, Sun, Moon, ChevronLeft, ChevronRight, X } from "lucide-react"
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City"]
 const imageUrls = Array.from({ length: 50 }, (_, i) => ({
@@ -75,6 +75,37 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
 
   const handleImageClick = (index: number) => {
     setSelectedImage(index)
+  }
+
+  // Add keyboard navigation useEffect
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedImage !== null) {
+        switch (e.key) {
+          case "ArrowLeft":
+            handlePrev()
+            break
+          case "ArrowRight":
+            handleNext()
+            break
+          case "Escape":
+            setSelectedImage(null)
+            break
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [selectedImage, filteredImages])
+
+  // Add navigation handlers
+  const handleNext = () => {
+    setSelectedImage(prev => (prev === null ? null : Math.min(prev + 1, filteredImages.length - 1)))
+  }
+
+  const handlePrev = () => {
+    setSelectedImage(prev => (prev === null ? null : Math.max(prev - 1, 0)))
   }
 
   return (
@@ -238,7 +269,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
         {selectedImage !== null && (
           <div 
             className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-            onClick={() => setSelectedImage(null)}
+            onClick={(e) => e.target === e.currentTarget && setSelectedImage(null)}
             onMouseEnter={() => setIsHovering(true)}
           >
             <div className="relative max-w-4xl w-full max-h-[90vh]">
@@ -246,13 +277,32 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 className="absolute -top-8 right-0 text-white hover:text-gray-200 transition-colors"
                 onClick={() => setSelectedImage(null)}
               >
-                Close
+                <X className="w-6 h-6" />
               </button>
+              
+              {/* Navigation Buttons */}
+              <button
+                className="absolute left-0 -translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
+                onClick={handlePrev}
+                disabled={selectedImage === 0}
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+              
+              <button
+                className="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
+                onClick={handleNext}
+                disabled={selectedImage === filteredImages.length - 1}
+              >
+                <ChevronRight className="w-8 h-8" />
+              </button>
+
               <img
                 src={filteredImages[selectedImage].url}
                 alt={`Enlarged view - ${filteredImages[selectedImage].category}`}
                 className="w-full h-full object-contain rounded-lg"
               />
+              
               <div className="absolute bottom-4 left-4 text-white text-sm bg-black/50 px-3 py-1 rounded-full">
                 {filteredImages[selectedImage].category}
               </div>
