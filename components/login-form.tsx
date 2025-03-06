@@ -1,8 +1,7 @@
 "use client"
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Lock, Check, ArrowRight } from "lucide-react"
+import { Lock, Check, ArrowRight, Sun, Moon } from "lucide-react"
 import { useAuth } from "./auth-provider"
-import toast from "react-hot-toast"
 
 interface LoginFormProps {
   setIsHovering: (value: boolean) => void
@@ -24,6 +23,13 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
   const patternRef = useRef<HTMLDivElement>(null)
   const { login, loginWithPattern, isAuthenticated } = useAuth()
   const [debug, setDebug] = useState("")
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedMode = localStorage.getItem("darkMode")
+      return savedMode ? JSON.parse(savedMode) : true
+    }
+    return true
+  })
 
   // Generate pattern grid points
   const patternGrid = Array.from({ length: 9 }, (_, i) => ({
@@ -31,6 +37,19 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
     row: Math.floor(i / 3),
     col: i % 3,
   }))
+
+  // Toggle dark mode and save to localStorage
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode
+    setIsDarkMode(newMode)
+    document.documentElement.classList.toggle("dark", newMode)
+    localStorage.setItem("darkMode", JSON.stringify(newMode))
+  }
+
+  // Set initial dark mode from localStorage
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDarkMode)
+  }, [isDarkMode])
 
   const handlePasswordSubmit = useCallback(async () => {
     if (!password) {
@@ -45,12 +64,12 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
       const success = await login(password)
 
       if (!success) {
-        setShake(true);
-        setError("Access Denied: Biometric Mismatch");
+        setShake(true)
+        setError("Access Denied: Biometric Mismatch")
         setTimeout(() => {
-          setShake(false);
-          setError("");
-        }, 2000);
+          setShake(false)
+          setError("")
+        }, 2000)
       }
     } catch (err) {
       setError("An error occurred. Please try again.")
@@ -59,7 +78,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
     }
   }, [password, login])
 
-  const handlePatternSubmit = async () => {
+  const handlePatternSubmit = useCallback(async () => {
     setIsLoading(true)
     setError("")
     setDebug(`Submitting pattern: ${patternPoints.map((p) => p.index).join(", ")}`)
@@ -82,7 +101,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
         setPatternPoints([])
       }
     }
-  }
+  }, [setIsLoading, setError, setDebug, patternPoints, loginWithPattern, setShake, setPatternPoints, isAuthenticated])
 
   // Handle clicking on a pattern point
   const handlePointClick = (index: number, row: number, col: number) => {
@@ -114,7 +133,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
     setPatternPoints([])
     setError("")
     setDebug("")
-  }, [usePattern])
+  }, [usePattern, setPatternPoints, setError, setDebug])
 
   useEffect(() => {
     if (patternPoints.length === 5) {
@@ -147,7 +166,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
 
       {/* Right side - Login form */}
       <div className="flex-grow p-4">
-        {/* Toggle switch */}
+        {/* Toggle switch and dark mode toggle */}
         <div className="flex justify-between mb-8">
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setUsePattern(!usePattern)}>
             <span className="text-xs text-gray-400">{usePattern ? "Password" : "Pattern"}</span>
@@ -160,6 +179,15 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
             </div>
             <span className="text-xs text-gray-400">{usePattern ? "Pattern" : "Password"}</span>
           </div>
+
+          {/* Dark mode toggle button */}
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-lg hover:bg-gray-800/50 transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? <Sun className="w-4 h-4 text-gray-400" /> : <Moon className="w-4 h-4 text-gray-400" />}
+          </button>
         </div>
 
         {usePattern ? (
@@ -211,10 +239,8 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
 
             {/* Counter showing progress */}
             <div className="absolute -bottom-8 left-0 right-0 text-center text-xs text-green-500">
-              {patternPoints.length > 0 ? `${patternPoints.length}/4 points selected` : ""}
+              {patternPoints.length > 0 ? `${patternPoints.length}/5 points selected` : ""}
             </div>
-
-            
 
             {debug && (
               <div className="absolute -bottom-20 left-0 right-0 text-center text-xs text-blue-500">{debug}</div>
@@ -260,8 +286,8 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handlePasswordSubmit();
+                  if (e.key === "Enter") {
+                    handlePasswordSubmit()
                   }
                 }}
                 className={`w-full rounded-full border bg-black/30 p-3 pl-10 pr-12 transition-all duration-300 focus:outline-none ${

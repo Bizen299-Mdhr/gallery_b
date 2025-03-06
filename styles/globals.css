@@ -16,6 +16,16 @@
   --glass-shadow: rgba(0, 0, 0, 0.3);
 }
 
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 10, 10, 20;
+  --background-end-rgb: 5, 5, 15;
+
+  --glass-bg: rgba(10, 10, 20, 0.6);
+  --glass-border: rgba(80, 80, 150, 0.2);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb))) fixed;
@@ -98,3 +108,4 @@ body {
   @apply text-transparent bg-clip-text bg-gradient-to-r from-secondary to-primary;
   text-shadow: 0 0 5px rgb(var(--secondary), 0.5), 0 0 10px rgb(var(--primary), 0.5);
 }
+
