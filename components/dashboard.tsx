@@ -5,7 +5,7 @@ import { LogOut, Grid, List, Sun, Moon } from "lucide-react"
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City"]
 const imageUrls = Array.from({ length: 90 }, (_, i) => ({
-  url: `https://picsum.photos/800/600?random=${i}`,
+  url: `https://picsum.photos/1024/768?random=${i}`,
   category: categories[Math.floor(Math.random() * (categories.length - 1)) + 1] // Assign random category
 }))
 
@@ -42,7 +42,6 @@ export default function Dashboard() {
       })
     }
 
-    window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
