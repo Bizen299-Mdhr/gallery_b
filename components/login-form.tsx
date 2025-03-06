@@ -152,7 +152,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
     >
       {/* Left side - Profile image */}
       <div className="flex-shrink-0 p-4">
-        <div className="rounded-full border-2 border-green-500 p-1 overflow-hidden">
+        <div className="rounded-full border-2 border-blue-500 p-1 overflow-hidden">
           <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-black">
             <img
               src="https://picsum.photos/200/200?random=profile"
@@ -172,7 +172,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
             <span className="text-xs text-gray-400">{usePattern ? "Password" : "Pattern"}</span>
             <div className="relative w-10 h-5 bg-gray-800 rounded-full">
               <div
-                className={`absolute top-0.5 w-4 h-4 rounded-full bg-green-500 transition-all duration-300 ${
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-blue-500 transition-all duration-300 ${
                   usePattern ? "left-5" : "left-0.5"
                 }`}
               ></div>
@@ -203,15 +203,15 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
                   className={`relative flex items-center justify-center rounded-full transition-all duration-200 
                     ${
                       patternPoints.some((p) => p.index === point.index)
-                        ? "bg-green-500/30 scale-110"
-                        : "bg-gray-800/50 hover:bg-green-500/10"
+                        ? "bg-blue-500/30 scale-110"
+                        : "bg-gray-800/50 hover:bg-blue-500/10"
                     }`}
                 >
                   <div
                     className={`w-6 h-6 rounded-full transition-all duration-200 ${
                       patternPoints.some((p) => p.index === point.index)
-                        ? "bg-green-500 scale-110"
-                        : "bg-gray-600 hover:bg-green-500/50"
+                        ? "bg-blue-500 scale-110"
+                        : "bg-gray-600 hover:bg-blue-500/50"
                     }`}
                   >
                     {/* Show the index number inside each point */}
@@ -233,12 +233,12 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
                   const x2 = point.x * pointSize + pointSize / 2
                   const y2 = point.y * pointSize + pointSize / 2
 
-                  return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgb(34, 197, 94)" strokeWidth="2" />
+                  return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgb(59, 130, 246)" strokeWidth="2" />
                 })}
             </svg>
 
             {/* Counter showing progress */}
-            <div className="absolute -bottom-8 left-0 right-0 text-center text-xs text-green-500">
+            <div className="absolute -bottom-8 left-0 right-0 text-center text-xs text-blue-500">
               {patternPoints.length > 0 ? `${patternPoints.length}/5 points selected` : ""}
             </div>
 
@@ -249,7 +249,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
                 <svg
-                  className="h-8 w-8 animate-spin text-green-500"
+                  className="h-8 w-8 animate-spin text-blue-500"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -268,7 +268,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
             {patternPoints.length >= 4 && !isLoading && (
               <button
                 onClick={handlePatternSubmit}
-                className="absolute -bottom-24 left-1/2 -translate-x-1/2 px-4 py-2 bg-green-500 text-white rounded-md text-sm"
+                className="absolute -bottom-24 left-1/2 -translate-x-1/2 px-4 py-2 bg-blue-500 text-white rounded-md text-sm"
               >
                 Login with Pattern
               </button>
@@ -279,7 +279,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
           <div className="relative">
             <div className="flex items-center">
               <div className="absolute left-3 pointer-events-none">
-                {password ? <Check className="h-5 w-5 text-green-500" /> : <Lock className="h-5 w-5 text-gray-400" />}
+                {password ? <Check className="h-5 w-5 text-blue-500" /> : <Lock className="h-5 w-5 text-gray-400" />}
               </div>
               <input
                 type="password"
@@ -292,12 +292,12 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
                 }}
                 className={`w-full rounded-full border bg-black/30 p-3 pl-10 pr-12 transition-all duration-300 focus:outline-none ${
                   error ? "border-red-500 text-red-300" : "border-gray-700 text-white"
-                } focus:border-green-500 focus:ring-1 focus:ring-green-500`}
+                } focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
                 placeholder="Enter password"
               />
               <button
                 onClick={handlePasswordSubmit}
-                className="absolute right-3 p-1 text-gray-400 hover:text-green-500 transition-colors"
+                className="absolute right-3 p-1 text-gray-400 hover:text-blue-500 transition-colors"
                 disabled={isLoading}
               >
                 <ArrowRight className="h-5 w-5" />
@@ -307,7 +307,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
             {isLoading && (
               <div className="absolute right-12 top-1/2 -translate-y-1/2">
                 <svg
-                  className="h-4 w-4 animate-spin text-green-500"
+                  className="h-4 w-4 animate-spin text-blue-500"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
