@@ -30,6 +30,12 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
   const [filteredImages, setFilteredImages] = useState(imageUrls)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
+  const [clickedImagePosition, setClickedImagePosition] = useState<{
+    x: number
+    y: number
+    width: number
+    height: number
+  } | null>(null)
 
   // Toggle dark mode and save to localStorage
   const toggleDarkMode = () => {
@@ -75,7 +81,14 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
   // Calculate container height based on number of images
   const containerHeight = Math.ceil(filteredImages.length / 5) * 600 + window.innerHeight
 
-  const handleImageClick = (index: number) => {
+  const handleImageClick = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    setClickedImagePosition({
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height
+    })
     setSelectedImage(index)
   }
 
@@ -109,6 +122,16 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
   const handlePrev = () => {
     setSelectedImage(prev => (prev === null ? null : Math.max(prev - 1, 0)))
   }
+
+  // Add this useEffect to reset clickedImagePosition after animation
+  useEffect(() => {
+    if (selectedImage !== null) {
+      const timer = setTimeout(() => {
+        setClickedImagePosition(null)
+      }, 10) // Short delay to trigger the animation
+      return () => clearTimeout(timer)
+    }
+  }, [selectedImage])
 
   return (
     <main
@@ -155,7 +178,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                   zIndex: index % 2 === 0 ? 1 : 2,
                   transform: `rotate(${index % 2 === 0 ? -3 : 3}deg)`,
                 }}
-                onClick={() => handleImageClick(index)}
+                onClick={(e) => handleImageClick(index, e)}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >
@@ -177,7 +200,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 style={{
                   transitionDelay: `${(index % 6) * 50}ms`,
                 }}
-                onClick={() => handleImageClick(index)}
+                onClick={(e) => handleImageClick(index, e)}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >
@@ -207,42 +230,73 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
         {selectedImage !== null && (
           <div 
             className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-            onClick={(e) => e.target === e.currentTarget && setSelectedImage(null)}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setSelectedImage(null)
+                setClickedImagePosition(null) // Reset position on close
+              }
+            }}
             onMouseEnter={() => setIsHovering(true)}
+            style={{
+              opacity: clickedImagePosition ? 0 : 1,
+              transition: 'opacity 0.5s ease-out',
+            }}
           >
-            <div className="relative max-w-4xl w-full max-h-[90vh]">
-              <button
-                className="absolute -top-8 right-0 text-white hover:text-gray-200 transition-colors"
-                onClick={() => setSelectedImage(null)}
-              >
-                <X className="w-6 h-6" />
-              </button>
-              
-              {/* Navigation Buttons */}
-              <button
-                className="absolute left-0 -translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
-                onClick={handlePrev}
-                disabled={selectedImage === 0}
-              >
-                <ChevronLeft className="w-8 h-8" />
-              </button>
-              
-              <button
-                className="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
-                onClick={handleNext}
-                disabled={selectedImage === filteredImages.length - 1}
-              >
-                <ChevronRight className="w-8 h-8" />
-              </button>
+            <div 
+              className="relative max-w-4xl w-full max-h-[90vh] perspective-1000"
+              style={{
+                transform: clickedImagePosition 
+                  ? `
+                    translate(
+                      ${clickedImagePosition.x - window.innerWidth/2 + clickedImagePosition.width/2}px,
+                      ${clickedImagePosition.y - window.innerHeight/2 + clickedImagePosition.height/2}px
+                    )
+                    rotateY(${clickedImagePosition.x > window.innerWidth/2 ? -90 : 90}deg)
+                    scale(0.2)
+                  ` 
+                  : 'none',
+                transition: 'all 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              <div className="relative w-full h-full transform-style-preserve-3d">
+                <button
+                  className="absolute -top-8 right-0 text-white hover:text-gray-200 transition-colors"
+                  onClick={() => setSelectedImage(null)}
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                
+                {/* Navigation Buttons */}
+                <button
+                  className="absolute left-0 -translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
+                  onClick={handlePrev}
+                  disabled={selectedImage === 0}
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+                
+                <button
+                  className="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
+                  onClick={handleNext}
+                  disabled={selectedImage === filteredImages.length - 1}
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
 
-              <img
-                src={filteredImages[selectedImage].url}
-                alt={`Enlarged view - ${filteredImages[selectedImage].category}`}
-                className="w-full h-full object-contain rounded-lg"
-              />
-              
-              <div className="absolute bottom-4 left-4 text-white text-sm bg-black/50 px-3 py-1 rounded-full">
-                {filteredImages[selectedImage].category}
+                <img
+                  src={filteredImages[selectedImage].url}
+                  alt={`Enlarged view - ${filteredImages[selectedImage].category}`}
+                  className="w-full h-full object-contain rounded-lg shadow-2xl"
+                  style={{
+                    transform: clickedImagePosition ? 'rotateY(0deg)' : 'none',
+                    transition: 'transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
+                  }}
+                />
+                
+                <div className="absolute bottom-4 left-4 text-white text-sm bg-black/50 px-3 py-1 rounded-full">
+                  {filteredImages[selectedImage].category}
+                </div>
               </div>
             </div>
           </div>
