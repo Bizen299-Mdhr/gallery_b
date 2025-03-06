@@ -1,5 +1,5 @@
 import type React from "react"
-import "./globals.css"
+import "/styles/globals.css"
 import { Inter } from "next/font/google"
 import { AuthProvider } from "@/components/auth-provider"
 import { Toaster } from 'react-hot-toast'

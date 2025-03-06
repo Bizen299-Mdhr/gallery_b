@@ -4,7 +4,7 @@ import { useAuth } from "./auth-provider"
 import { LogOut, Grid, List, Sun, Moon } from "lucide-react"
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City"]
-const imageUrls = Array.from({ length: 90 }, (_, i) => ({
+const imageUrls = Array.from({ length: 50 }, (_, i) => ({
   url: `https://picsum.photos/1024/768?random=${i}`,
   category: categories[Math.floor(Math.random() * (categories.length - 1)) + 1] // Assign random category
 }))
@@ -13,18 +13,26 @@ export default function Dashboard() {
   const { logout } = useAuth()
   const [activeCategory, setActiveCategory] = useState("All")
   const [viewMode, setViewMode] = useState<"grid" | "float">("float")
-  const [isDarkMode, setIsDarkMode] = useState(true)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedMode = localStorage.getItem('darkMode')
+      return savedMode ? JSON.parse(savedMode) : true
+    }
+    return true
+  })
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
   const [filteredImages, setFilteredImages] = useState(imageUrls)
   const [isLoading, setIsLoading] = useState(false)
 
-  // Toggle dark mode
+  // Toggle dark mode and save to localStorage
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode)
-    document.documentElement.classList.toggle('dark', !isDarkMode)
+    const newMode = !isDarkMode
+    setIsDarkMode(newMode)
+    document.documentElement.classList.toggle('dark', newMode)
+    localStorage.setItem('darkMode', JSON.stringify(newMode))
   }
 
-  // Set initial dark mode
+  // Set initial dark mode from localStorage
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode)
   }, [isDarkMode])
@@ -68,7 +76,7 @@ export default function Dashboard() {
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Futuristic Gallery
+            My Gallery
           </h1>
           <div className="flex items-center gap-4">
             <div className="flex gap-2">
