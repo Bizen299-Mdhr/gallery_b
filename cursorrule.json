@@ -1,0 +1,49 @@
+{
+  "rules": {
+    "component": {
+      "pattern": "components/**/*.tsx",
+      "prompts": {
+        "create": "Create a new React component with TypeScript that follows these requirements:",
+        "update": "Update the existing component to include these changes:"
+      }
+    },
+    "page": {
+      "pattern": "app/**/page.tsx",
+      "prompts": {
+        "create": "Create a new Next.js page component with TypeScript that follows these requirements:",
+        "update": "Update the existing page to include these changes:"
+      }
+    },
+    "api": {
+      "pattern": "app/api/**/route.ts",
+      "prompts": {
+        "create": "Create a new API route handler with TypeScript that follows these requirements:",
+        "update": "Update the existing API route to include these changes:"
+      }
+    },
+    "style": {
+      "pattern": "styles/**/*.css",
+      "prompts": {
+        "create": "Create new CSS styles that follow these requirements:",
+        "update": "Update the existing styles to include these changes:"
+      }
+    }
+  },
+  "conventions": {
+    "naming": {
+      "components": "PascalCase",
+      "files": "kebab-case",
+      "variables": "camelCase",
+      "constants": "UPPER_CASE"
+    },
+    "imports": {
+      "order": ["react", "next", "third-party", "local"],
+      "grouping": "newline"
+    },
+    "formatting": {
+      "indent": 2,
+      "semicolons": true,
+      "quotes": "single"
+    }
+  }
+} 

@@ -1,0 +1,40 @@
+my-next-app/
+├── app/
+│   ├── (auth)/
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   └── register/
+│   │       └── page.tsx
+│   ├── (main)/
+│   │   ├── dashboard/
+│   │   │   └── page.tsx
+│   │   └── settings/
+│   │       └── page.tsx
+│   ├── api/
+│   │   ├── auth/
+│   │   │   └── route.ts
+│   │   └── users/
+│   │       └── route.ts
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── button.tsx
+│   │   │   └── card.tsx
+│   │   └── layout.tsx
+│   ├── lib/
+│   │   ├── auth.ts
+│   │   └── utils.ts
+│   ├── styles/
+│   │   └── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── public/
+│   ├── images/
+│   └── icons/
+├── .env.local
+├── .eslintrc.js
+├── .gitignore
+├── next.config.js
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+└── tsconfig.json 
