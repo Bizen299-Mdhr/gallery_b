@@ -215,7 +215,7 @@ export default function LoginForm({ setIsHovering }: LoginFormProps) {
                     }`}
                   >
                     {/* Show the index number inside each point */}
-                    <span className="text-xs text-white">{point.index}</span>
+                    <span className="text-xs text-white"></span>
                   </div>
                 </button>
               ))}
