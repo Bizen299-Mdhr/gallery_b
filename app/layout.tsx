@@ -3,12 +3,67 @@ import "/styles/globals.css"
 import { Inter } from "next/font/google"
 import { AuthProvider } from "@/components/auth-provider"
 import { Toaster } from 'react-hot-toast'
-
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Futuristic Image Gallery",
-  description: "A secure and futuristic image gallery with authentication",
+  title: {
+    default: 'Bizen MDHR | Gallery',
+    template: '%s | Bizen MDHR | Gallery', // For dynamic titles in child pages
+    absolute: 'Bizen MDHR | Gallery'
+  },
+  description: 'Auth Family Gallery - A premier online gallery showcasing stunning artworks and photography. Featuring a curated collection of masterpieces, we specialize in digital exhibitions, custom art displays, and immersive visual experiences.',
+  keywords: [
+    'bizen mdhr family gallery',
+    'bizen mdhr family art collection',
+    'bizen mdhr family photography',
+    'bizen mdhr family exhibition',
+    'bizen mdhr family digital gallery',
+    'bizen mdhr family heritage art',
+    'bizen mdhr family legacy gallery',
+    'bizen mdhr family authentic family portraits',
+    'bizen mdhr family ancestral art collection',
+    'bizen mdhr family family history through art',
+    'bizen mdhr family family storytelling through art',
+    'bizen mdhr family authentic cultural gallery',
+    'bizen mdhr family generational art showcase',
+    'bizen mdhr family artistic family legacy',
+],
+authors: [{ name: 'Bizen Mdhr', url: 'https://gallery.bizendra.com.np' }],
+robots: {
+  index: true,
+  follow: true,
+},
+openGraph: {
+  title: 'Bizen Mdhr Gallery',
+  description: 'Bizen Mdhr Gallery - A curated collection of family-inspired artworks and photography. Showcasing heritage, culture, and storytelling through visual art in Nepal.',
+  url: 'https://gallery.bizendra.com.np',
+  siteName: 'Bizen Mdhr Gallery | Art & Photography Nepal',
+  images: [
+    {
+      url: './gallery-thumbnail.png', // Path to your OG image
+      width: 800,
+      height: 600,
+    }
+  ],
+  locale: 'en-US',
+  type: 'website',
+},
+manifest: '/site.webmanifest',
+icons: {
+  icon: './favicon-32x32.png',
+  apple: './apple-touch-icon.png',
+  other: {
+    rel: 'icon',
+    url: './favicon.ico',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Bizen MDHR | Gallery',
+    description: 'Bizen MDHR Gallery - A curated collection of family-inspired artworks and photography. Showcasing heritage, culture, and storytelling through visual art in Nepal.',
+    images: ['./gallery-thumbnail.png'], // Path to your Twitter image
+  },
+},
+
 }
 
 export default function RootLayout({

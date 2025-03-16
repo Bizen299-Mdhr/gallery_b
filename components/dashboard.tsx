@@ -4,6 +4,7 @@ import { useAuth } from "./auth-provider"
 import { LogOut, Grid, List, Sun, Moon, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { Header } from "./header"
 import { CategoryNav } from "./category-nav"
+import { useDisableInspect } from '@/hooks/useDisableInspect'
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City"]
 const imageUrls = Array.from({ length: 50 }, (_, i) => ({
@@ -16,6 +17,9 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) {
+  if(process.env.NODE_ENV !== "development"){
+    useDisableInspect()
+  }
   const { logout } = useAuth()
   const [activeCategory, setActiveCategory] = useState("All")
   const [viewMode, setViewMode] = useState<"grid" | "float">("float")
