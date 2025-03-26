@@ -6,11 +6,33 @@ import { Header } from "./header"
 import { CategoryNav } from "./category-nav"
 import { useDisableInspect } from '@/hooks/useDisableInspect'
 
-const categories = ["All", "Nature", "Tech", "Abstract", "City"]
+const categories = ["All", "Nature", "Tech", "Abstract", "City", "Videos"]
 const imageUrls = Array.from({ length: 50 }, (_, i) => ({
   url: `https://picsum.photos/1024/768?random=${i}`,
-  category: categories[Math.floor(Math.random() * (categories.length - 1)) + 1], // Assign random category
+  category: categories[Math.floor(Math.random() * (categories.length - 2)) + 1], // Assign random category except Videos
+  isVideo:false
 }))
+
+// Add YouTube videos with thumbnails
+const videoUrls = [
+  {
+    url: "https://www.youtube.com/watch?v=72eQoVgbEG8&ab_channel=ShivendraSingh",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    category: "Videos",
+    isVideo: true
+  },
+  
+  {
+    url: "https://www.youtube.com/watch?v=q9zKUhZWP9s&ab_channel=thebipinmaharjanofficial",
+    thumbnail: "https://img.youtube.com/vi/y8OnoxKotPQ/maxresdefault.jpg",
+    category: "Videos",
+    isVideo: true
+  },
+  // Add more videos as needed
+]
+
+// Combine both arrays for content
+const allContent = [...imageUrls, ...videoUrls]
 
 interface DashboardProps {
   setIsHovering?: (value: boolean) => void
@@ -31,7 +53,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
     return true
   })
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [filteredImages, setFilteredImages] = useState(imageUrls)
+  const [filteredImages, setFilteredImages] = useState(allContent)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
   const [clickedImagePosition, setClickedImagePosition] = useState<{
@@ -75,7 +97,9 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
     setIsLoading(true)
     const timer = setTimeout(() => {
       setFilteredImages(
-        activeCategory === "All" ? imageUrls : imageUrls.filter((img) => img.category === activeCategory),
+        activeCategory === "All" 
+          ? allContent 
+          : allContent.filter((item) => item.category === activeCategory),
       )
       setIsLoading(false)
     }, 300)
@@ -169,7 +193,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
               paddingBottom: "100vh", // Extra space for scrolling
             }}
           >
-            {filteredImages.map(({ url }, index) => (
+            {filteredImages.map(({ url, isVideo, thumbnail, category }, index) => (
               <div
                 key={index}
                 ref={(el) => {
@@ -187,17 +211,26 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 onMouseLeave={() => setIsHovering(false)}
               >
                 <img
-                  src={url || "/placeholder.svg"}
-                  alt={`Gallery Image ${index}`}
+                  src={isVideo ? thumbnail : url}
+                  alt={`Gallery ${isVideo ? 'Video' : 'Image'} ${index}`}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                 />
+                {isVideo && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-6 h-6">
+                        <path d="M8 5v14l11-7z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         ) : (
           // Grid Layout
           <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-            {filteredImages.map(({ url }, index) => (
+            {filteredImages.map(({ url, isVideo, thumbnail, category }, index) => (
               <div
                 key={index}
                 className="relative aspect-square rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden group shadow-md md:shadow-lg dark:shadow-gray-800/50 transition-all duration-300 cursor-pointer active:scale-95"
@@ -209,10 +242,19 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 onMouseLeave={() => setIsHovering(false)}
               >
                 <img
-                  src={url || "/placeholder.svg"}
-                  alt={`Gallery Image ${index}`}
+                  src={isVideo ? thumbnail : url}
+                  alt={`Gallery ${isVideo ? 'Video' : 'Image'} ${index}`}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                 />
+                {isVideo && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-6 h-6">
+                        <path d="M8 5v14l11-7z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                )}
                 <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-2 text-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {filteredImages[index].category}
                 </div>
@@ -237,7 +279,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setSelectedImage(null)
-                setClickedImagePosition(null) // Reset position on close
+                setClickedImagePosition(null)
               }
             }}
             onMouseEnter={() => setIsHovering(true)}
@@ -288,15 +330,30 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                   <ChevronRight className="w-8 h-8" />
                 </button>
 
-                <img
-                  src={filteredImages[selectedImage].url}
-                  alt={`Enlarged view - ${filteredImages[selectedImage].category}`}
-                  className="w-full h-full object-contain rounded-lg shadow-2xl"
-                  style={{
-                    transform: clickedImagePosition ? 'rotateY(0deg)' : 'none',
-                    transition: 'transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
-                  }}
-                />
+                {filteredImages[selectedImage].isVideo ? (
+                  <div className="w-full aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${getYouTubeVideoId(filteredImages[selectedImage].url)}`}
+                      className="w-full h-full rounded-lg"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      style={{
+                        transform: clickedImagePosition ? 'rotateY(0deg)' : 'none',
+                        transition: 'transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={filteredImages[selectedImage].url}
+                    alt={`Enlarged view - ${filteredImages[selectedImage].category}`}
+                    className="w-full h-full object-contain rounded-lg shadow-2xl"
+                    style={{
+                      transform: clickedImagePosition ? 'rotateY(0deg)' : 'none',
+                      transition: 'transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
+                    }}
+                  />
+                )}
                 
                 <div className="absolute bottom-4 left-4 text-white text-sm bg-black/50 px-3 py-1 rounded-full">
                   {filteredImages[selectedImage].category}
@@ -308,5 +365,12 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
       </div>
     </main>
   )
+}
+
+// Add this utility function at the end of the component
+function getYouTubeVideoId(url: string) {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
 }
 

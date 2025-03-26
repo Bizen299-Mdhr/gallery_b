@@ -37,7 +37,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://hebbkx1anhila5yf.public.blob.vercel-storage.com  https://picsum.photos https://*.picsum.photos/* https://fonts.googleapis.com/*; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://simple-email-api-jyzt.onrender.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" 
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src https://*.youtube.com 'self' data: https://hebbkx1anhila5yf.public.blob.vercel-storage.com https://youtube.com  https://picsum.photos https://*.picsum.photos/* https://fonts.googleapis.com/*; font-src 'self' https://fonts.gstatic.com https://youtube.com; connect-src 'self' https://simple-email-api-jyzt.onrender.com; frame-src 'self' https://www.youtube.com https://*.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self';" 
           },
           {
             key: 'Access-Control-Allow-Origin',
