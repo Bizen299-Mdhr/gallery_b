@@ -141,7 +141,7 @@ export default function VideoPlayer({
     >
       {/* YouTube-like header with keyboard shortcut hint */}
       <div className="bg-gray-900 w-full py-2 px-4 flex justify-between items-center">
-        <h1 className="text-white font-medium">Video Player</h1>
+        <h1 className="text-white font-medium"></h1>
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm hidden sm:inline-block">
             Press ESC to close

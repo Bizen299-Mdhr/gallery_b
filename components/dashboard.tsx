@@ -30,21 +30,6 @@ const videoUrls = [
     isVideo: true,
     title: "Incredible Mountain Views"
   },
-  // Add more videos with titles
-  {
-    url: "https://www.youtube.com/watch?v=mX_2rM1d-YI",
-    thumbnail: "https://img.youtube.com/vi/mX_2rM1d-YI/maxresdefault.jpg",
-    category: "Videos",
-    isVideo: true,
-    title: "Technology Showcase 2023"
-  },
-  {
-    url: "https://www.youtube.com/watch?v=Pj2NOTanzWI",
-    thumbnail: "https://img.youtube.com/vi/Pj2NOTanzWI/maxresdefault.jpg",
-    category: "Videos",
-    isVideo: true,
-    title: "Urban Skyline Timelapse"
-  },
   {
     url: "https://www.youtube.com/watch?v=PkZNo7MFNFg",
     thumbnail: "https://img.youtube.com/vi/PkZNo7MFNFg/maxresdefault.jpg",
@@ -58,13 +43,6 @@ const videoUrls = [
     category: "Videos",
     isVideo: true,
     title: "Amazing Ocean Documentary"
-  },
-  {
-    url: "https://www.youtube.com/watch?v=aeCq2xJ6Vq8",
-    thumbnail: "https://img.youtube.com/vi/aeCq2xJ6Vq8/maxresdefault.jpg",
-    category: "Videos",
-    isVideo: true,
-    title: "Abstract Art Creation"
   },
 ]
 
