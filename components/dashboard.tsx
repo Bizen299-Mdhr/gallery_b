@@ -6,44 +6,25 @@ import { Header } from "./header"
 import { CategoryNav } from "./category-nav"
 import { useDisableInspect } from '@/hooks/useDisableInspect'
 import VideoPlayer from "./video-player"
+import { getYouTubeVideoId, getMultipleYouTubeVideoDetails } from '@/utils/youtube'
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City", "Videos"]
 const imageUrls = Array.from({ length: 50 }, (_, i) => ({
   url: `https://picsum.photos/1024/768?random=${i}`,
   category: categories[Math.floor(Math.random() * (categories.length - 2)) + 1], // Assign random category except Videos
-  isVideo:false
+  isVideo:false,
+  thumbnail: "",
 }))
 
-// Add more video data including titles
+// Define video URLs (we'll fetch the details later)
 const videoUrls = [
   {
-    url: "https://www.youtube.com/watch?v=72eQoVgbEG8&ab_channel=ShivendraSingh",
-    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    url: "https://www.youtube.com/watch?v=q9zKUhZWP9s",
+    thumbnail: "",
     category: "Videos",
     isVideo: true,
-    title: "Beautiful Nature Timelapse"
-  },
-  {
-    url: "https://www.youtube.com/watch?v=q9zKUhZWP9s&ab_channel=thebipinmaharjanofficial",
-    thumbnail: "https://img.youtube.com/vi/y8OnoxKotPQ/maxresdefault.jpg",
-    category: "Videos",
-    isVideo: true,
-    title: "Incredible Mountain Views"
-  },
-  {
-    url: "https://www.youtube.com/watch?v=PkZNo7MFNFg",
-    thumbnail: "https://img.youtube.com/vi/PkZNo7MFNFg/maxresdefault.jpg",
-    category: "Videos",
-    isVideo: true,
-    title: "Programming Tutorial"
-  },
-  {
-    url: "https://www.youtube.com/watch?v=gO8N3L_aERg",
-    thumbnail: "https://img.youtube.com/vi/gO8N3L_aERg/maxresdefault.jpg",
-    category: "Videos",
-    isVideo: true,
-    title: "Amazing Ocean Documentary"
-  },
+    title: ""
+  }
 ]
 
 // Combine both arrays for content
@@ -79,6 +60,80 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
   } | null>(null)
   const [showVideoPlayer, setShowVideoPlayer] = useState(false)
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0)
+  const [isLoadingVideos, setIsLoadingVideos] = useState(false)
+
+  // Create a reference to store the complete video data that won't be affected by filters
+  const completeVideosRef = useRef([...videoUrls]);
+
+  // On first load, fetch and set up video data with thumbnails
+  useEffect(() => {
+    // Initialize videos with thumbnails even before API call
+    const initialVideosWithThumbnails = videoUrls.map(video => {
+      const videoId = getYouTubeVideoId(video.url);
+      return {
+        ...video,
+        thumbnail: video.thumbnail
+      };
+    });
+    
+    // Update our complete videos reference
+    completeVideosRef.current = initialVideosWithThumbnails;
+    
+    // Create initial all content with thumbnails
+    const initialAllContent = [...imageUrls, ...initialVideosWithThumbnails];
+    setFilteredImages(
+      activeCategory === "All" 
+        ? initialAllContent 
+        : initialAllContent.filter(item => item.category === activeCategory)
+    );
+    
+    // No need for API calls here as they're blocked by CSP
+  }, []);
+
+  // Modified filter function to ensure thumbnails are preserved
+  useEffect(() => {
+    setIsLoading(true);
+    
+    // Get the latest complete data (with thumbnails)
+    const allContentWithThumbnails = [
+      ...imageUrls,
+      ...completeVideosRef.current
+    ];
+    
+    const timer = setTimeout(() => {
+      // Filter by category but preserve all properties
+      const filtered = activeCategory === "All" 
+        ? allContentWithThumbnails 
+        : allContentWithThumbnails.filter(item => item.category === activeCategory);
+      
+      setFilteredImages(filtered);
+      setIsLoading(false);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [activeCategory]);
+
+  // Modified image click handler
+  const handleImageClick = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
+    if (filteredImages[index].isVideo) {
+      // Find the matching video in our complete videos reference
+      const videoUrl = filteredImages[index].url;
+      const videoIndex = completeVideosRef.current.findIndex(v => v.url === videoUrl);
+      
+      setSelectedVideoIndex(videoIndex >= 0 ? videoIndex : 0);
+      setShowVideoPlayer(true);
+      return;
+    }
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    setClickedImagePosition({
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height
+    })
+    setSelectedImage(index)
+  }
 
   // Toggle dark mode and save to localStorage
   const toggleDarkMode = () => {
@@ -109,44 +164,8 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Filter images when category changes
-  useEffect(() => {
-    setIsLoading(true)
-    const timer = setTimeout(() => {
-      setFilteredImages(
-        activeCategory === "All" 
-          ? allContent 
-          : allContent.filter((item) => item.category === activeCategory),
-      )
-      setIsLoading(false)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [activeCategory])
-
   // Calculate container height based on number of images
   const containerHeight = Math.ceil(filteredImages.length / 5) * 600 + window.innerHeight
-
-  // Modify handleImageClick to check if video and show video player with index
-  const handleImageClick = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
-    if (filteredImages[index].isVideo) {
-      // Find the index in the videoUrls array
-      const videoIndex = videoUrls.findIndex(
-        video => video.url === filteredImages[index].url
-      )
-      setSelectedVideoIndex(videoIndex >= 0 ? videoIndex : 0)
-      setShowVideoPlayer(true)
-      return
-    }
-    
-    const rect = e.currentTarget.getBoundingClientRect()
-    setClickedImagePosition({
-      x: rect.left,
-      y: rect.top,
-      width: rect.width,
-      height: rect.height
-    })
-    setSelectedImage(index)
-  }
 
   // Add keyboard navigation useEffect
   useEffect(() => {
@@ -221,7 +240,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
               paddingBottom: "100vh", // Extra space for scrolling
             }}
           >
-            {filteredImages.map(({ url, isVideo, thumbnail, category }, index) => (
+            {filteredImages.map(({ url, isVideo, thumbnail, category, title }, index) => (
               <div
                 key={index}
                 ref={(el) => {
@@ -239,7 +258,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 onMouseLeave={() => setIsHovering(false)}
               >
                 <img
-                  src={isVideo ? thumbnail : url}
+                  src={isVideo ? (thumbnail || `https://img.youtube.com/vi/${getYouTubeVideoId(url)}/maxresdefault.jpg`) : url}
                   alt={`Gallery ${isVideo ? 'Video' : 'Image'} ${index}`}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                 />
@@ -258,7 +277,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
         ) : (
           // Grid Layout
           <div className="max-w-7xl mx-auto px-2 sm:px-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-            {filteredImages.map(({ url, isVideo, thumbnail, category }, index) => (
+            {filteredImages.map(({ url, isVideo, thumbnail, category, title }, index) => (
               <div
                 key={index}
                 className="relative aspect-square rounded-lg md:rounded-xl lg:rounded-2xl overflow-hidden group shadow-md md:shadow-lg dark:shadow-gray-800/50 transition-all duration-300 cursor-pointer active:scale-95"
@@ -270,7 +289,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 onMouseLeave={() => setIsHovering(false)}
               >
                 <img
-                  src={isVideo ? thumbnail : url}
+                  src={isVideo ? (thumbnail || `https://img.youtube.com/vi/${getYouTubeVideoId(url)}/maxresdefault.jpg`) : url}
                   alt={`Gallery ${isVideo ? 'Video' : 'Image'} ${index}`}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                 />
@@ -284,7 +303,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                   </div>
                 )}
                 <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-2 text-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  {filteredImages[index].category}
+                  {category}
                 </div>
               </div>
             ))}
@@ -395,19 +414,13 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
       {/* Add VideoPlayer component */}
       {showVideoPlayer && (
         <VideoPlayer 
-          videos={videoUrls}
+          // Always use our complete videos reference for the player
+          videos={completeVideosRef.current}
           initialVideoIndex={selectedVideoIndex}
           onClose={() => setShowVideoPlayer(false)}
         />
       )}
     </main>
   )
-}
-
-// Add this utility function at the end of the component
-function getYouTubeVideoId(url: string) {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  return match && match[2].length === 11 ? match[2] : null;
 }
 

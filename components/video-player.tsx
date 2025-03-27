@@ -1,6 +1,7 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
 import { X } from "lucide-react"
+import { getYouTubeVideoId } from '@/utils/youtube'
 
 interface VideoPlayerProps {
   videos: {
@@ -9,6 +10,7 @@ interface VideoPlayerProps {
     category: string
     isVideo: boolean
     title?: string
+    channelTitle?: string
   }[]
   initialVideoIndex?: number
   onClose: () => void
@@ -119,13 +121,6 @@ export default function VideoPlayer({
     e.stopPropagation()
   }
   
-  // Function to extract YouTube video ID
-  const getYouTubeVideoId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-    const match = url.match(regExp)
-    return match && match[2].length === 11 ? match[2] : null
-  }
-  
   // Handle video selection
   const handleVideoSelect = (index: number) => {
     setActiveVideoIndex(index)
@@ -168,7 +163,7 @@ export default function VideoPlayer({
         >
           <div className="aspect-video w-full flex-shrink-0">
             <iframe
-              key={videoKey} // Add key to force iframe refresh on video change
+              key={videoKey}
               src={`https://www.youtube.com/embed/${getYouTubeVideoId(videos[activeVideoIndex].url)}?autoplay=1&rel=0`}
               className="w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -176,10 +171,26 @@ export default function VideoPlayer({
             />
           </div>
           
-          {/* Video info section */}
+          {/* Enhanced video info section */}
           <div className="p-4 text-white overflow-y-auto" onWheel={(e) => e.stopPropagation()}>
             <h2 className="text-xl font-bold">{videos[activeVideoIndex].title || `Video ${activeVideoIndex + 1}`}</h2>
-            <p className="text-gray-400 mt-2">{videos[activeVideoIndex].category}</p>
+            
+            <div className="flex items-center mt-2 text-gray-400">
+              <span className="text-sm">{videos[activeVideoIndex].channelTitle || "YouTube Channel"}</span>
+              <span className="mx-2">•</span>
+              <span className="text-sm">{videos[activeVideoIndex].category}</span>
+            </div>
+            
+            <div className="mt-4 pt-4 border-t border-gray-800">
+              <a 
+                href={videos[activeVideoIndex].url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 bg-red-600 text-white rounded-full text-sm hover:bg-red-700 transition-colors"
+              >
+                Open on YouTube
+              </a>
+            </div>
           </div>
         </div>
         
