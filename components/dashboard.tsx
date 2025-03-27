@@ -6,10 +6,10 @@ import { Header } from "./header"
 import { CategoryNav } from "./category-nav"
 import { useDisableInspect } from '@/hooks/useDisableInspect'
 import VideoPlayer from "./video-player"
-import { getYouTubeVideoId, getMultipleYouTubeVideoDetails } from '@/utils/youtube'
+import { getYouTubeVideoId, getMultipleYouTubeVideoDetails, getYouTubeVideoDetails } from '@/utils/youtube'
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City", "Videos"]
-const imageUrls = Array.from({ length: 50 }, (_, i) => ({
+const imageUrls = Array.from({ length: 10 }, (_, i) => ({
   url: `https://picsum.photos/1024/768?random=${i}`,
   category: categories[Math.floor(Math.random() * (categories.length - 2)) + 1], // Assign random category except Videos
   isVideo:false,
@@ -24,6 +24,14 @@ const videoUrls = [
     category: "Videos",
     isVideo: true,
     title: ""
+  },
+  {
+    url: "https://www.youtube.com/watch?v=bF9l0Dckft4",
+    thumbnail: "",
+    category: "Videos",
+    isVideo: true,
+    title: ""
+    
   }
 ]
 
@@ -67,28 +75,40 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
 
   // On first load, fetch and set up video data with thumbnails
   useEffect(() => {
-    // Initialize videos with thumbnails even before API call
-    const initialVideosWithThumbnails = videoUrls.map(video => {
-      const videoId = getYouTubeVideoId(video.url);
-      return {
-        ...video,
-        thumbnail: video.thumbnail
-      };
-    });
+    const fetchVideoDetails = async () => {
+      try {
+        setIsLoadingVideos(true);
+        
+        // Create a new array with all video details fetched
+        const videosWithDetails = await Promise.all(
+          videoUrls.map(async (video) => {
+            const videoDetail = await getYouTubeVideoDetails(video.url);
+            return {
+              ...video,
+              ...videoDetail
+            };
+          })
+        );
+        
+        // Update our complete videos reference
+        completeVideosRef.current = videosWithDetails;
+        
+        // Create initial all content with thumbnails
+        const initialAllContent = [...imageUrls, ...videosWithDetails];
+        setFilteredImages(
+          activeCategory === "All" 
+            ? initialAllContent 
+            : initialAllContent.filter(item => item.category === activeCategory)
+        );
+      } catch (error) {
+        console.error("Error fetching video details:", error);
+      } finally {
+        setIsLoadingVideos(false);
+      }
+    };
     
-    // Update our complete videos reference
-    completeVideosRef.current = initialVideosWithThumbnails;
-    
-    // Create initial all content with thumbnails
-    const initialAllContent = [...imageUrls, ...initialVideosWithThumbnails];
-    setFilteredImages(
-      activeCategory === "All" 
-        ? initialAllContent 
-        : initialAllContent.filter(item => item.category === activeCategory)
-    );
-    
-    // No need for API calls here as they're blocked by CSP
-  }, []);
+    fetchVideoDetails();
+  }, [activeCategory]);
 
   // Modified filter function to ensure thumbnails are preserved
   useEffect(() => {

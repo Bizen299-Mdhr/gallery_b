@@ -206,39 +206,7 @@ export default function VideoPlayer({
           
           <div className="video-list-container">
             {/* Original videos */}
-            {videos.map((video, index) => (
-              <div 
-                key={index}
-                className={`video-item-${index} p-3 flex gap-3 cursor-pointer hover:bg-gray-800 transition-colors ${
-                  index === activeVideoIndex ? 'bg-gray-800' : ''
-                }`}
-                onClick={() => handleVideoSelect(index)}
-              >
-                <div className="relative w-40 aspect-video flex-shrink-0">
-                  <img 
-                    src={video.thumbnail}
-                    alt={`Video thumbnail ${index}`}
-                    className="w-full h-full object-cover rounded"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center opacity-80">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-4 h-4">
-                        <path d="M8 5v14l11-7z"></path>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex-1 text-white">
-                  <p className="line-clamp-2 font-medium text-sm">
-                    {video.title || `Video ${index + 1}`}
-                  </p>
-                  <p className="text-gray-400 text-xs mt-1">
-                    {video.category}
-                  </p>
-                </div>
-              </div>
-            ))}
+           
             
             {/* Duplicate videos for seamless scrolling */}
             {videos.map((video, index) => (
