@@ -5,6 +5,7 @@ import { LogOut, Grid, List, Sun, Moon, ChevronLeft, ChevronRight, X } from "luc
 import { Header } from "./header"
 import { CategoryNav } from "./category-nav"
 import { useDisableInspect } from '@/hooks/useDisableInspect'
+import VideoPlayer from "./video-player"
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City", "Videos"]
 const imageUrls = Array.from({ length: 50 }, (_, i) => ({
@@ -13,22 +14,58 @@ const imageUrls = Array.from({ length: 50 }, (_, i) => ({
   isVideo:false
 }))
 
-// Add YouTube videos with thumbnails
+// Add more video data including titles
 const videoUrls = [
   {
     url: "https://www.youtube.com/watch?v=72eQoVgbEG8&ab_channel=ShivendraSingh",
     thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
     category: "Videos",
-    isVideo: true
+    isVideo: true,
+    title: "Beautiful Nature Timelapse"
   },
-  
   {
     url: "https://www.youtube.com/watch?v=q9zKUhZWP9s&ab_channel=thebipinmaharjanofficial",
     thumbnail: "https://img.youtube.com/vi/y8OnoxKotPQ/maxresdefault.jpg",
     category: "Videos",
-    isVideo: true
+    isVideo: true,
+    title: "Incredible Mountain Views"
   },
-  // Add more videos as needed
+  // Add more videos with titles
+  {
+    url: "https://www.youtube.com/watch?v=mX_2rM1d-YI",
+    thumbnail: "https://img.youtube.com/vi/mX_2rM1d-YI/maxresdefault.jpg",
+    category: "Videos",
+    isVideo: true,
+    title: "Technology Showcase 2023"
+  },
+  {
+    url: "https://www.youtube.com/watch?v=Pj2NOTanzWI",
+    thumbnail: "https://img.youtube.com/vi/Pj2NOTanzWI/maxresdefault.jpg",
+    category: "Videos",
+    isVideo: true,
+    title: "Urban Skyline Timelapse"
+  },
+  {
+    url: "https://www.youtube.com/watch?v=PkZNo7MFNFg",
+    thumbnail: "https://img.youtube.com/vi/PkZNo7MFNFg/maxresdefault.jpg",
+    category: "Videos",
+    isVideo: true,
+    title: "Programming Tutorial"
+  },
+  {
+    url: "https://www.youtube.com/watch?v=gO8N3L_aERg",
+    thumbnail: "https://img.youtube.com/vi/gO8N3L_aERg/maxresdefault.jpg",
+    category: "Videos",
+    isVideo: true,
+    title: "Amazing Ocean Documentary"
+  },
+  {
+    url: "https://www.youtube.com/watch?v=aeCq2xJ6Vq8",
+    thumbnail: "https://img.youtube.com/vi/aeCq2xJ6Vq8/maxresdefault.jpg",
+    category: "Videos",
+    isVideo: true,
+    title: "Abstract Art Creation"
+  },
 ]
 
 // Combine both arrays for content
@@ -62,6 +99,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
     width: number
     height: number
   } | null>(null)
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false)
 
   // Toggle dark mode and save to localStorage
   const toggleDarkMode = () => {
@@ -109,7 +147,13 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
   // Calculate container height based on number of images
   const containerHeight = Math.ceil(filteredImages.length / 5) * 600 + window.innerHeight
 
+  // Modify handleImageClick to check if video and show video player
   const handleImageClick = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
+    if (filteredImages[index].isVideo && activeCategory === "Videos") {
+      setShowVideoPlayer(true)
+      return
+    }
+    
     const rect = e.currentTarget.getBoundingClientRect()
     setClickedImagePosition({
       x: rect.left,
@@ -363,6 +407,14 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
           </div>
         )}
       </div>
+
+      {/* Add VideoPlayer component */}
+      {showVideoPlayer && (
+        <VideoPlayer 
+          videos={videoUrls}
+          onClose={() => setShowVideoPlayer(false)}
+        />
+      )}
     </main>
   )
 }
