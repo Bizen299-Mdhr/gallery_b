@@ -100,6 +100,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
     height: number
   } | null>(null)
   const [showVideoPlayer, setShowVideoPlayer] = useState(false)
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(0)
 
   // Toggle dark mode and save to localStorage
   const toggleDarkMode = () => {
@@ -147,9 +148,14 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
   // Calculate container height based on number of images
   const containerHeight = Math.ceil(filteredImages.length / 5) * 600 + window.innerHeight
 
-  // Modify handleImageClick to check if video and show video player
+  // Modify handleImageClick to check if video and show video player with index
   const handleImageClick = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
-    if (filteredImages[index].isVideo && activeCategory === "Videos") {
+    if (filteredImages[index].isVideo) {
+      // Find the index in the videoUrls array
+      const videoIndex = videoUrls.findIndex(
+        video => video.url === filteredImages[index].url
+      )
+      setSelectedVideoIndex(videoIndex >= 0 ? videoIndex : 0)
       setShowVideoPlayer(true)
       return
     }
@@ -412,6 +418,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
       {showVideoPlayer && (
         <VideoPlayer 
           videos={videoUrls}
+          initialVideoIndex={selectedVideoIndex}
           onClose={() => setShowVideoPlayer(false)}
         />
       )}
