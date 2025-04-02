@@ -44,7 +44,7 @@ interface DashboardProps {
 
 export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) {
   if(process.env.NODE_ENV !== "development"){
-    useDisableInspect()
+    // useDisableInspect()
   }
   const { logout } = useAuth()
   const [activeCategory, setActiveCategory] = useState("All")
