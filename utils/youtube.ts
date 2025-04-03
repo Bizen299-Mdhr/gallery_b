@@ -1,8 +1,9 @@
 // YouTube API utility functions
 
 const YOUTUBE_API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || ''; // You'll need to add this to your environment variables
+const YOUTUBE_API_KEY_DEV = process.env.YOUTUBE_API_KEY_DEV || ''; // You'll need to add this to your environment variables
 console.log(YOUTUBE_API_KEY , 'YOUTUBE_API_KEY');
-
+console.log(YOUTUBE_API_KEY_DEV , 'YOUTUBE_API_KEY_DEV');
 interface YouTubeVideoDetails {
   id: string;
   title: string;
