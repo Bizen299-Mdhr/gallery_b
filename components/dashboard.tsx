@@ -228,6 +228,38 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
     }
   }, [selectedImage])
 
+  useEffect(() => {
+    if (selectedImage !== null) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [selectedImage]);
+
+  useEffect(() => {
+    const handleScroll = (e: WheelEvent) => {
+      if (selectedImage !== null) {
+        e.preventDefault(); // Prevent default scrolling behavior
+        if (e.deltaY > 0) {
+          handleNext();
+        } else if (e.deltaY < 0) {
+          handlePrev();
+        }
+      }
+    };
+
+    const popupElement = document.querySelector('.fixed.inset-0.z-50');
+    if (popupElement) {
+      popupElement.addEventListener('wheel', handleScroll, { passive: false });
+    }
+
+    return () => {
+      if (popupElement) {
+        popupElement.removeEventListener('wheel', handleScroll);
+      }
+    };
+  }, [selectedImage, filteredImages]);
+
   return (
     <main
       className="min-h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden"
@@ -383,7 +415,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 
                 {/* Navigation Buttons */}
                 <button
-                  className="absolute left-0 -translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
                   onClick={handlePrev}
                   disabled={selectedImage === 0}
                 >
@@ -391,7 +423,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 </button>
                 
                 <button
-                  className="absolute right-0 translate-x-full top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-white hover:text-gray-200 disabled:opacity-50"
                   onClick={handleNext}
                   disabled={selectedImage === filteredImages.length - 1}
                 >
