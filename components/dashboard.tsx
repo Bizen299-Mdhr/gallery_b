@@ -9,7 +9,7 @@ import VideoPlayer from "./video-player"
 import { getYouTubeVideoId, getMultipleYouTubeVideoDetails, getYouTubeVideoDetails } from '@/utils/youtube'
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City", "Videos"]
-const imageUrls = Array.from({ length: 10 }, (_, i) => ({
+const imageUrls = Array.from({ length: 5 }, (_, i) => ({
   url: `https://picsum.photos/1024/768?random=${i}`,
   category: categories[Math.floor(Math.random() * (categories.length - 2)) + 1], // Assign random category except Videos
   isVideo:false,
@@ -258,6 +258,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
             style={{
               height: `${containerHeight}px`,
               paddingBottom: "100vh", // Extra space for scrolling
+              paddingLeft: "20px", // Add padding on the left
             }}
           >
             {filteredImages.map(({ url, isVideo, thumbnail, category, title }, index) => (
@@ -268,10 +269,10 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                 }}
                 className="absolute w-[300px] h-[400px] rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden group transition-all duration-500 cursor-pointer"
                 style={{
-                  left: `${10 + (index % 5) * 18}%`,
-                  top: `${Math.floor(index / 5) * 500}px`,
+                  left: `${9.5 + (index % 4) * 20}%`,
+                  top: `${Math.floor(index / 4) * 500}px`,
                   zIndex: index % 2 === 0 ? 1 : 2,
-                  transform: `rotate(${index % 2 === 0 ? -3 : 3}deg)`,
+                  transform: `rotate(${index % 2 === 0 ? -3 : 5}deg)`,
                 }}
                 onClick={(e) => handleImageClick(index, e)}
                 onMouseEnter={() => setIsHovering(true)}
