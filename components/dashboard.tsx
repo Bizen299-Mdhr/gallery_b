@@ -7,6 +7,7 @@ import { CategoryNav } from "./category-nav"
 import { useDisableInspect } from '@/hooks/useDisableInspect'
 import VideoPlayer from "./video-player"
 import { getYouTubeVideoId, getMultipleYouTubeVideoDetails, getYouTubeVideoDetails } from '@/utils/youtube'
+import { useSwipeable } from 'react-swipeable'
 
 const categories = ["All", "Nature", "Tech", "Abstract", "City", "Videos"]
 const imageUrls = Array.from({ length: 5 }, (_, i) => ({
@@ -260,6 +261,12 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
     };
   }, [selectedImage, filteredImages]);
 
+  const handlers = useSwipeable({
+    onSwipedLeft: () => handleNext(),
+    onSwipedRight: () => handlePrev(),
+    trackMouse: true,
+  });
+
   return (
     <main
       className="min-h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden"
@@ -324,6 +331,11 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
                     </div>
                   </div>
                 )}
+                {title && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-2 text-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {title}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -375,6 +387,7 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
 
         {selectedImage !== null && (
           <div 
+            {...handlers}
             className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
