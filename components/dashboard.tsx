@@ -250,12 +250,12 @@ export default function Dashboard({ setIsHovering = () => {} }: DashboardProps) 
 
     const popupElement = document.querySelector('.fixed.inset-0.z-50');
     if (popupElement) {
-      popupElement.addEventListener('wheel', handleScroll, { passive: false });
+      popupElement.addEventListener('wheel', handleScroll as EventListener, { passive: false });
     }
 
     return () => {
       if (popupElement) {
-        popupElement.removeEventListener('wheel', handleScroll);
+        popupElement.removeEventListener('wheel', handleScroll as EventListener);
       }
     };
   }, [selectedImage, filteredImages]);
